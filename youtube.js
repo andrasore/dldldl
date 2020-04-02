@@ -47,9 +47,7 @@ exports.getPlaylistItems = async function(url, googleToken) {
                 throw err;
             }
         }
-        if (response.data.pageToken) {
-            pageToken = response.data.pageToken;
-        }
+        pageToken = response.data.nextPageToken;
 
         playlistItems.push(...response.data.items);
     } while (pageToken)
