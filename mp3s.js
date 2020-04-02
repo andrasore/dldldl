@@ -4,7 +4,7 @@ const nodeId3 = require('node-id3');
 const path = require('path');
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
-const ffmpegStatic = require('ffmpeg-static')
+const ffmpegStatic = require('ffmpeg-static');
 
 exports.writeTagsToFile = async function (targetFile, tags) {
     return new Promise((resolve, reject) => {
@@ -20,8 +20,6 @@ exports.writeTagsToFile = async function (targetFile, tags) {
 }
 
 exports.convertVideoToMp3 = async function (inputFile, outputFile) {
-    this._logger.info('Retriever: converting ' + path.basename(inputFile));
-
     const args = [
         '-i', inputFile, // input file
         '-vn', // disable video
@@ -33,7 +31,5 @@ exports.convertVideoToMp3 = async function (inputFile, outputFile) {
 
     const cwd = path.dirname(outputFile);
 
-    await execFile(ffmpegStatic.path, args, { cwd });
-
-    this._logger.info('Retriever: finished ' + path.basename(inputFile));
+    await execFile(ffmpegStatic, args, { cwd });
 }
