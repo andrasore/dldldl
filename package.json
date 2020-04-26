@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "bin": {
+    "dldldl": "cli.js"
+  },
+  "author": "Andras Sore",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^13.9.8",
