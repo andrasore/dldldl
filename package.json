@@ -18,6 +18,7 @@
     "fs-extra": "^9.0.0",
     "node-id3": "^0.1.16",
     "p-queue": "^6.3.0",
-    "ytdl-core": "^2.0.1"
+    "spotify-dl": "^0.3.0",
+    "ytdl-core": "^3.3.0"
   }
 }
