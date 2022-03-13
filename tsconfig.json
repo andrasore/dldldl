@@ -1,18 +1,12 @@
 {
     "compilerOptions": {
-        "allowJs": true,
-        "checkJs": true,
         "target": "esnext",
         "module": "commonjs",
         "outDir": "lib",
         "types": [ "node" ],
-        "resolveJsonModule": true,
         "sourceMap": true,
-        "skipLibCheck": true,
-        "noUnusedLocals": true,
-        "noEmit": true
-    },
-    "typeAcquisition": {
-        "enable": true
+        "noEmit": true,
+        "esModuleInterop": true,
+        "strict": true
     }
 }
