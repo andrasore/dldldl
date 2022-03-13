@@ -5,7 +5,6 @@
         "outDir": "lib",
         "types": [ "node" ],
         "sourceMap": true,
-        "noEmit": true,
         "esModuleInterop": true,
         "strict": true
     }

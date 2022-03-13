@@ -4,7 +4,8 @@
   "description": "A music syncing utility",
   "main": "cli.js",
   "scripts": {
-    "test": "ts-standard && tsc"
+    "build": "tsc",
+    "lint": "ts-standard"
   },
   "bin": {
     "dldldl": "cli.js"
