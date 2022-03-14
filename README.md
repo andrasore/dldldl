@@ -45,3 +45,14 @@ This will result in the following folder structure:
   <libarary path>/MyPlaylistName1/...
   <libarary path>/MyPlaylistName2/...
 ```
+
+Music library
+-------------
+
+The tracks are downloaded into separate folders, as seen above. The tracks are
+identified by their filenames. Renaming the files will result in downloading
+them again.
+
+The folder structure can be modified freely, so you can organize the tracks
+however you want. New tracks will always be downloaded into the playlist's
+original folders.
