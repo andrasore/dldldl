@@ -1,13 +1,16 @@
 'use strict'
 
-import nodeId3 from 'node-id3'
+// import nodeId3 from 'node-id3'
 import path from 'path'
 import util from 'util'
 import * as child_process from 'child_process'
 import ffmpegStatic from 'ffmpeg-static'
 const execFile = util.promisify(child_process.execFile)
 
-export async function writeTagsToFile (targetFile: string, tags: string[]): Promise<void> {
+// skipping this for now
+
+/*
+export async function writeTagsToFile (targetFile: string, tags: any): Promise<void> {
   return await new Promise((resolve, reject) => {
     nodeId3.write(tags, targetFile, err => {
       if (err != null) {
@@ -18,6 +21,7 @@ export async function writeTagsToFile (targetFile: string, tags: string[]): Prom
     })
   })
 }
+*/
 
 export async function convertVideoToMp3 (inputFile: string, outputFile: string): Promise<void> {
   const args = [
