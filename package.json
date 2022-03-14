@@ -1,6 +1,6 @@
 {
   "name": "dldldl",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A music syncing utility",
   "main": "cli.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "fs-extra": "^9.0.0",
     "node-id3": "^0.1.16",
     "p-queue": "^6.3.0",
-    "ytdl-core": "^3.4.2",
+    "ytdl-core": "^4.11.0",
     "ytpl": "^2.3.0",
     "zod": "^3.13.4"
   },
