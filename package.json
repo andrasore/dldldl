@@ -8,18 +8,20 @@
     "lint": "ts-standard"
   },
   "bin": {
-    "dldldl": "cli.js"
+    "dldldl": "lib/src/cli.js"
   },
   "author": "Andras Sore",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.26.1",
+    "commander": "^9.0.0",
     "ffmpeg-static": "^4.0.1",
     "fs-extra": "^9.0.0",
     "node-id3": "^0.1.16",
     "p-queue": "^6.3.0",
-    "ytdl-core": "^3.3.0",
-    "ytpl": "^2.3.0"
+    "ytdl-core": "^3.4.2",
+    "ytpl": "^2.3.0",
+    "zod": "^3.13.4"
   },
   "devDependencies": {
     "@types/ffmpeg-static": "^3.0.1",

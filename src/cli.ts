@@ -1,15 +1,33 @@
+#!/usr/bin/node
 import fs from 'fs-extra'
 import path from 'path'
 import * as util from './util'
 import * as youtube from './youtube'
 import * as mp3s from './mp3s'
 import PQueue from 'p-queue'
+import { Command } from 'commander'
+import packageJson from '../package.json'
+import zod from 'zod'
 
-const workingDir = path.resolve(process.argv[2])
+const program = new Command()
+
+program
+  .name('dldldl')
+  .description('A music playlist syncing utility')
+  .version(packageJson.version)
+  .argument('<library path>')
+
+program.parse()
+
+const workingDir = path.resolve(program.processedArgs[0])
 
 console.log('Working dir is: ' + workingDir)
 
-const config = fs.readJSONSync(path.join(workingDir, 'dldldl.json'))
+const ConfigFileSchema = zod.object({
+  playlists: zod.record(zod.string())
+})
+
+const config = ConfigFileSchema.parse(fs.readJSONSync(path.join(workingDir, 'dldldl.json')))
 
 const playlists = config.playlists
 
@@ -32,7 +50,9 @@ util.collectMp3s(workingDir)
       const targetDir = path.join(workingDir, name)
       await fs.ensureDir(targetDir)
 
-      switch (util.getPlaylistType(playlists[name])) {
+      const playlistUrl = new URL(playlists[name])
+
+      switch (util.getPlaylistType(playlistUrl)) {
         case 'YOUTUBE_PLAYLIST':
           promises.push(downloadYoutubePlaylist(playlists[name], targetDir, collection))
           break
