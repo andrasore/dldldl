@@ -36,7 +36,7 @@ export function getPlaylistType (url: URL): 'YOUTUBE_PLAYLIST' | 'SPOTIFY_PLAYLI
 
 // These are sure are bad for filesystem names!
 // For simplicity we only allow filenames that are both good on Windows and UN*Xes
-const UnsafeChars = /["\\/:*?<>|]/g
+export const UnsafeChars = /["\\/:*?<>|]/g
 
 export function isBadFilename (s: string): boolean {
   return UnsafeChars.test(s)

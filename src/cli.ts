@@ -33,6 +33,8 @@ const playlists = config.playlists
 
 console.log('Reading library...')
 
+const workQueue = new PQueue({ concurrency: 3 })
+
 util.collectMp3s(workingDir)
   .then(async mp3s => {
     const collection = new Set<string>(mp3s)
@@ -40,11 +42,9 @@ util.collectMp3s(workingDir)
     console.log(`${collection.size} tracks found.`)
     console.log()
 
-    const promises: Array<Promise<void>> = []
-
     for (const name of Object.keys(playlists)) {
       if (util.isBadFilename(name)) {
-        throw new Error(`Playlist name "${name}" is invalid! Please fix it!" `)
+        throw new Error(`Playlist name "${name}" contains one or more of "${util.UnsafeChars.toString()}" chars! Please fix it!`)
       }
 
       const targetDir = path.join(workingDir, name)
@@ -54,13 +54,11 @@ util.collectMp3s(workingDir)
 
       switch (util.getPlaylistType(playlistUrl)) {
         case 'YOUTUBE_PLAYLIST':
-          promises.push(downloadYoutubePlaylist(playlists[name], targetDir, collection))
+          await downloadYoutubePlaylist(playlists[name], targetDir, collection)
           break
       }
     }
   }).catch(err => console.log(err))
-
-const workQueue = new PQueue({ concurrency: 3 })
 
 async function downloadYoutubePlaylist (url: string, targetDir: string, existingTracks: Set<string>): Promise<void> {
   const items = await youtube.getPlaylistItems(url)
@@ -73,7 +71,8 @@ async function downloadYoutubePlaylist (url: string, targetDir: string, existing
 
     console.log(`Found new track: "${filename}"`)
 
-    await workQueue.add(async () => {
+    /* eslint-disable @typescript-eslint/no-floating-promises */
+    workQueue.add(async () => {
       const videoPath = path.join(targetDir, filename + '.mp4')
       const audioPath = path.join(targetDir, filename + '.mp3')
       await youtube.downloadYoutube(item.url, videoPath)
