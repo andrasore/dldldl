@@ -1,18 +1,13 @@
 dldldl
 ======
 
-**dldldl** is a simple node utility for syncing your music playlists on various
-sites onto your hard drive. Currently it supports YouTube.
-
-It is similar to https://github.com/alltomp3/alltomp3-app, except
-**dldldl** is focused on syncing playlists incrementally. Currently it only
-has ffmpeg-static as a native dependency.
+**dldldl** is a simple node utility for incrementally syncing your music
+playlists on various sites onto your hard drive. Currently it supports YouTube
+and Soundcloud.
 
 Usage
 -----
 
-Run `npm run build` and `npm link` since it is not published yet to npm.
-For `npm link` you may need `sudo` on Linux based systems.
 Start with `dldldl <library path>`.
 
 Configuration
@@ -33,8 +28,8 @@ Example:
 ```
   {
     "playlists": {
-      "MyPlaylistName1": "https://youtube.com/playlist?list=<playlist url>",
-      "MyPlaylistName2": "https://youtube.com/playlist?list=<playlist url>"
+      "MyPlaylistName1": "https://youtube.com/playlist?list=<playlist id>",
+      "MyPlaylistName2": "https://soundcloud.com/user/<user>/sets/<playlist name>"
     }
   }
 ```
@@ -53,6 +48,26 @@ The tracks are downloaded into separate folders, as seen above. The tracks are
 identified by their filenames. Renaming the files will result in downloading
 them again.
 
+The filename based identification has some advantages. For scanning a music
+library we only have to read file paths, which is very fast. No DB is built
+from file metadata, etc.
+
 The folder structure can be modified freely, so you can organize the tracks
 however you want. New tracks will always be downloaded into the playlist's
 original folders.
+
+Spotify
+-------
+
+Supporting Spotify is a non-goal because AFAIK there are no libraries to extract
+music from it. The working solutions are _very_ hacky, e.g. one application I saw
+started an actual Spotify client to do the job.
+
+Similar software
+----------------
+
+- [AllToMP3](https://github.com/alltomp3/alltomp3-app) is a desktop app for downloading playlists.
+- [youtube-dl](https://github.com/ytdl-org/youtube-dl) is a command line
+  application for downloading videos from Youtube. The project also provides the
+  fine [https://www.npmjs.com/package/ytdl-core](ytdl-core) library, which is also used in this project.
+- [https://pypi.org/project/soundcloud-dl/](soundcloud-dl) is a Python program for getting Soundcloud playlists.

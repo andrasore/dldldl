@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
+import { PlaylistType } from './playlists'
 
 export async function collectMp3s (dir: string): Promise<string[]> {
   const result: string[] = []
@@ -21,14 +22,17 @@ export async function collectMp3s (dir: string): Promise<string[]> {
   return result
 }
 
-export function getPlaylistType (url: URL): 'YOUTUBE_PLAYLIST' | 'SPOTIFY_PLAYLIST' {
+export function getPlaylistType (url: URL): PlaylistType {
   if (url.protocol === 'http:' || url.protocol === 'https:') {
     if (url.host === 'www.youtube.com' || url.host === 'youtube.com') {
       if (url?.pathname.startsWith('/playlist')) {
-        return 'YOUTUBE_PLAYLIST'
+        return 'YOUTUBE'
       }
-    } else if (url.host === 'open.spotify.com') {
-      return 'SPOTIFY_PLAYLIST'
+    } else if (url.host === 'soundcloud.com') {
+      // This check should work for now...
+      if (url?.pathname.includes('/sets/')) {
+        return 'SOUNDCLOUD'
+      }
     }
   }
   throw new Error(`Invalid playlist url: ${url.toString()}`)

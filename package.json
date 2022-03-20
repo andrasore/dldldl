@@ -1,8 +1,8 @@
 {
   "name": "dldldl",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "A music syncing utility",
-  "main": "cli.js",
+  "repository": "github:andrasore/dldldl",
   "scripts": {
     "build": "tsc",
     "lint": "ts-standard"
@@ -19,6 +19,7 @@
     "fs-extra": "^9.0.0",
     "node-id3": "^0.1.16",
     "p-queue": "^6.3.0",
+    "soundcloud.ts": "^0.4.5",
     "ytdl-core": "^4.11.0",
     "ytpl": "^2.3.0",
     "zod": "^3.13.4"
