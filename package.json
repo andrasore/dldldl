@@ -5,7 +5,9 @@
   "repository": "github:andrasore/dldldl",
   "scripts": {
     "build": "tsc",
-    "lint": "ts-standard"
+    "lint": "ts-standard",
+    "test": "mocha",
+    "all": "npm run build && npm run lint && npm run test"
   },
   "bin": {
     "dldldl": "lib/src/cli.js"
@@ -27,7 +29,11 @@
   "devDependencies": {
     "@types/ffmpeg-static": "^3.0.1",
     "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^9.1.0",
     "@types/node": "^13.9.8",
+    "execa": "^5.1.1",
+    "mocha": "^9.2.2",
+    "source-map-support": "^0.5.21",
     "ts-standard": "^11.0.0",
     "typescript": "^4.6.2"
   }

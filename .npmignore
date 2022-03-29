@@ -1,3 +1,6 @@
 tsconfig.json
 .vscode
 .github
+test
+lib/test
+.mocharc.yml
