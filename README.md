@@ -1,5 +1,6 @@
 dldldl
 ======
+![CI](https://github.com/andrasore/dldldl/actions/workflows/node.js.yml/badge.svg)
 
 **dldldl** is a simple node utility for incrementally syncing your music
 playlists on various sites onto your hard drive. Currently it supports YouTube
