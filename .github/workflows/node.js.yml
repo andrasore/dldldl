@@ -5,9 +5,11 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master,  develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
+  schedule:
+    - cron:  '30 5,17 * * *'
 
 jobs:
   build:
@@ -27,5 +29,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm run lint
-    - run: npm run build
+    - run: npm run all
