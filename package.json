@@ -21,8 +21,8 @@
     "fs-extra": "^9.0.0",
     "node-id3": "^0.1.16",
     "p-queue": "^6.3.0",
-    "soundcloud.ts": "^0.4.6",
-    "ytdl-core": "^4.11.0",
+    "soundcloud.ts": "^0.4.9",
+    "ytdl-core": "^4.11.2",
     "ytpl": "^2.3.0",
     "zod": "^3.13.4"
   },
@@ -34,7 +34,7 @@
     "execa": "^5.1.1",
     "mocha": "^9.2.2",
     "source-map-support": "^0.5.21",
-    "ts-standard": "^11.0.0",
+    "ts-standard": "^12.0.1",
     "typescript": "^4.6.2"
   }
 }
