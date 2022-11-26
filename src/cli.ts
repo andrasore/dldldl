@@ -26,7 +26,7 @@ const workingDir = path.resolve(program.processedArgs[0])
 console.log('Working dir is: ' + workingDir)
 
 const ConfigFileSchema = zod.object({
-  playlists: zod.record(zod.string())
+  playlists: zod.record(zod.string()),
 })
 
 const config = ConfigFileSchema.parse(
@@ -61,6 +61,7 @@ util
       const playlistType = util.getPlaylistType(playlistUrl)
 
       await downloadPlaylist(
+        name,
         playlists[name],
         playlistType,
         targetDir,
@@ -70,7 +71,8 @@ util
   })
   .catch((err) => console.log(err))
 
-async function downloadPlaylist (
+async function downloadPlaylist(
+  name: string,
   url: string,
   type: PlaylistType,
   targetDir: string,
@@ -87,6 +89,8 @@ async function downloadPlaylist (
     console.error(err)
     return
   }
+
+  console.log(`Playlist ${name} has ${items.length} items.`)
 
   for (const item of items) {
     const filename = util.convertToSafePath(item.title)
