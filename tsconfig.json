@@ -6,8 +6,8 @@
     "sourceMap": true,
     "strict": true,
     "resolveJsonModule": true,
-        "allowJs": true,
-        "checkJs": true,
+    "allowJs": true,
+    "checkJs": true,
     "noEmit": true
   }
 }

@@ -1,6 +1,6 @@
 export interface PlaylistItem {
-  title: string
-  url: string
+  title: string;
+  url: string;
 }
 
-export type PlaylistType = 'YOUTUBE' | 'SOUNDCLOUD'
+export type PlaylistType = "YOUTUBE" | "SOUNDCLOUD";

@@ -72,10 +72,10 @@ util
   .catch((err) => console.log(err));
 
 /**  @param {string} name
-  *  @param {string} url
-  *  @param {PlaylistType} type
-  *  @param {string} targetDir
-  *  @param {Set<string>} existingTracks */
+ *  @param {string} url
+ *  @param {PlaylistType} type
+ *  @param {string} targetDir
+ *  @param {Set<string>} existingTracks */
 async function downloadPlaylist(name, url, type, targetDir, existingTracks) {
   let items;
   try {
