@@ -29,7 +29,7 @@ export async function collectMp3s (dir) {
     @returns {PlaylistType} */
 export function getPlaylistType (url) {
   if (url.protocol === 'http:' || url.protocol === 'https:') {
-    if (url.host === 'www.youtube.com' || url.host === 'youtube.com') {
+    if (url.host === 'www.youtube.com' || url.host === 'youtube.com' || url.host === 'music.youtube.com') {
       if (url?.pathname.startsWith('/playlist')) {
         return 'YOUTUBE'
       }
