@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 import fs from 'fs-extra'
-import path from 'path'
-import * as util from './util'
-import * as youtube from './sites/youtube'
-import * as soundcloud from './sites/soundcloud'
-import * as mp3s from './mp3s'
+import path from 'node:path'
+import * as util from './util.js'
+import * as youtube from './sites/youtube.js'
+import * as soundcloud from './sites/soundcloud.js'
+import * as mp3s from './mp3s.js'
 import PQueue from 'p-queue'
 import { Command } from 'commander'
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 import zod from 'zod'
-import { PlaylistType } from './playlists'
+import { PlaylistType } from './playlists.js'
 
 const program = new Command()
 

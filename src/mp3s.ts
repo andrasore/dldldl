@@ -1,9 +1,9 @@
 'use strict'
 
 // import nodeId3 from 'node-id3'
-import path from 'path'
-import util from 'util'
-import * as child_process from 'child_process'
+import path from 'node:path'
+import util from 'node:util'
+import * as child_process from 'node:child_process'
 import ffmpegStatic from 'ffmpeg-static'
 const execFile = util.promisify(child_process.execFile)
 
@@ -35,5 +35,10 @@ export async function convertVideoToMp3 (inputFile: string, outputFile: string):
 
   const cwd = path.dirname(outputFile)
 
+  if (!ffmpegStatic) {
+    throw new Error('ffmpeg-static not found!');
+  }
+
+  // @ts-expect-error type of ffmpegStatic is import(...) instead of string
   await execFile(ffmpegStatic, args, { cwd })
 }

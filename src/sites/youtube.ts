@@ -1,7 +1,7 @@
 import ytdl from 'ytdl-core'
 import fs from 'fs-extra'
 import ytpl from 'ytpl'
-import { PlaylistItem } from '../playlists'
+import { PlaylistItem } from '../playlists.js'
 
 export async function downloadYoutube(
   url: string,

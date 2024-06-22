@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
-import path from 'path'
-import { PlaylistType } from './playlists'
+import path from 'node:path'
+import { PlaylistType } from './playlists.js'
 
 export async function collectMp3s (dir: string): Promise<string[]> {
   const result: string[] = []

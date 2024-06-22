@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import { promisify } from 'util'
 import { pipeline } from 'stream'
-import { PlaylistItem } from '../playlists'
-import Soundcloud from 'soundcloud.ts'
+import { PlaylistItem } from '../playlists.js'
+import { Soundcloud } from 'soundcloud.ts'
 
 const pipelinePromise = promisify(pipeline)
 

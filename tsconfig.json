@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
         "target": "esnext",
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "module": "nodenext",
         "outDir": "lib",
         "types": [ "node", "mocha" ],
         "sourceMap": true,
-        "esModuleInterop": true,
         "strict": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "noEmitOnError": false,
     }
 }

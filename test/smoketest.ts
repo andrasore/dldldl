@@ -1,11 +1,8 @@
-import * as execa from 'execa'
+import { execFileSync } from 'node:child_process'
 import fs from 'fs-extra'
 
-// These smoke tests ensure that the basic download functionality is working on
-// all sites
-
-describe('Test Youtube', function () {
-  it('should download a song from a test playlist', async function () {
+async function testYoutube() {
+    console.log('Smoketesting Youtube');
     await fs.emptyDir('./test/data')
     await fs.writeJSON('./test/data/dldldl.json', {
       playlists: {
@@ -13,12 +10,10 @@ describe('Test Youtube', function () {
       }
     })
 
-    execa.sync('node', ['./lib/src/cli.js', './test/data'])
-  })
-})
-
-describe('Test Soundcloud', function () {
-  it('should download a song from a test playlist', async function () {
+    execFileSync('node', ['./lib/src/cli.js', './test/data'])
+}
+async function testSoundcloud() {
+    console.log('Smoketesting Soundcloud');
     await fs.emptyDir('./test/data')
     await fs.writeJSON('./test/data/dldldl.json', {
       playlists: {
@@ -26,6 +21,17 @@ describe('Test Soundcloud', function () {
       }
     })
 
-    execa.sync('node', ['./lib/src/cli.js', './test/data'])
+    execFileSync('node', ['./lib/src/cli.js', './test/data'])
+}
+
+async function test() {
+     await testYoutube();
+     await testSoundcloud();
+}
+
+test()
+  .then(() => console.log('Success'))
+  .catch(err => {
+    console.log(err);
+    process.exit(-1);
   })
-})
