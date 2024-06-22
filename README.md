@@ -8,7 +8,10 @@ and Soundcloud.
 
 ## Usage
 
-Start with `dldldl <library path>`.
+Start with `node src/cli.js <library path>`.
+
+Alternatively you can use `npm link` to link the repo folder to the global
+node_modules directory. After doing so, you can start with `dldldl`.
 
 ## Configuration
 

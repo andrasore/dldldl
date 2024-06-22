@@ -12,7 +12,7 @@
     "all": "npm run prettier:check && npm run build && npm run test"
   },
   "bin": {
-    "dldldl": "lib/src/cli.js"
+    "dldldl": "src/cli.js"
   },
   "author": "Andras Sore",
   "license": "ISC",
