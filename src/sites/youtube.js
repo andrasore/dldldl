@@ -1,12 +1,12 @@
 import ytdl from 'ytdl-core'
 import fs from 'fs-extra'
 import ytpl from 'ytpl'
-import { PlaylistItem } from '../playlists.js'
+/** @typedef {import("../playlists.js").PlaylistItem} PlaylistItem */
 
-export async function downloadYoutube(
-  url: string,
-  targetFile: string
-): Promise<void> {
+/**  @param {string} url
+  *  @param {string} targetFile
+  *  @returns {Promise<void>} */
+export async function downloadYoutube(url, targetFile) {
   return await new Promise((resolve, reject) => {
     ytdl(url, { quality: 'highestaudio' })
       .on('end', () => resolve())
@@ -15,7 +15,9 @@ export async function downloadYoutube(
   })
 }
 
-export async function getPlaylistItems(url: string): Promise<PlaylistItem[]> {
+/**  @param {string} url
+  *  @returns {Promise<PlaylistItem[]>} */
+export async function getPlaylistItems(url) {
   const urlObj = new URL(url)
   const playlistId = urlObj.searchParams.get('list')
   if (playlistId === null) {

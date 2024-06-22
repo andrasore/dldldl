@@ -1,18 +1,16 @@
-dldldl
-======
+# dldldl
+
 ![CI](https://github.com/andrasore/dldldl/actions/workflows/node.js.yml/badge.svg)
 
 **dldldl** is a simple node utility for incrementally syncing your music
 playlists on various sites onto your hard drive. Currently it supports YouTube
 and Soundcloud.
 
-Usage
------
+## Usage
 
 Start with `dldldl <library path>`.
 
-Configuration
--------------
+## Configuration
 
 Pick a folder for storing the music library.
 
@@ -42,8 +40,7 @@ This will result in the following folder structure:
   <libarary path>/MyPlaylistName2/...
 ```
 
-Music library
--------------
+## Music library
 
 The tracks are downloaded into separate folders, as seen above. The tracks are
 identified by their filenames. Renaming the files will result in downloading
@@ -57,15 +54,13 @@ The folder structure can be modified freely, so you can organize the tracks
 however you want. New tracks will always be downloaded into the playlist's
 original folders.
 
-Spotify
--------
+## Spotify
 
 Supporting Spotify is a non-goal because AFAIK there are no libraries to extract
 music from it. The working solutions are _very_ hacky, e.g. one application I saw
 started an actual Spotify client to do the job.
 
-Similar software
-----------------
+## Similar software
 
 - [AllToMP3](https://github.com/alltomp3/alltomp3-app) is a desktop app for downloading playlists.
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl) is a command line

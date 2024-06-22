@@ -1,11 +1,14 @@
 import fs from 'fs-extra'
 import path from 'node:path'
-import { PlaylistType } from './playlists.js'
+/** @typedef {import("./playlists.js").PlaylistType} PlaylistType */
 
-export async function collectMp3s (dir: string): Promise<string[]> {
-  const result: string[] = []
+/**  @param {string} dir */
+export async function collectMp3s (dir) {
+  /**  @type {string[]} */
+  const result = []
 
-  async function collect (dir: string): Promise<void> {
+  /**  @param {string} dir */
+  async function collect (dir) {
     const items = await fs.readdir(dir)
     for (const item of items) {
       const stat = await fs.stat(path.join(dir, item))
@@ -22,7 +25,9 @@ export async function collectMp3s (dir: string): Promise<string[]> {
   return result
 }
 
-export function getPlaylistType (url: URL): PlaylistType {
+/** @param {URL} url
+    @returns {PlaylistType} */
+export function getPlaylistType (url) {
   if (url.protocol === 'http:' || url.protocol === 'https:') {
     if (url.host === 'www.youtube.com' || url.host === 'youtube.com') {
       if (url?.pathname.startsWith('/playlist')) {
@@ -42,10 +47,12 @@ export function getPlaylistType (url: URL): PlaylistType {
 // For simplicity we only allow filenames that are both good on Windows and UN*Xes
 export const UnsafeChars = /["\\/:*?<>|]/g
 
-export function isBadFilename (s: string): boolean {
+/**  @param {string} s */
+export function isBadFilename (s) {
   return UnsafeChars.test(s)
 }
 
-export function convertToSafePath (p: string): string {
+/**  @param {string} p */
+export function convertToSafePath (p) {
   return p.replace(UnsafeChars, '').normalize()
 }

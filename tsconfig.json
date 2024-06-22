@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "esnext",
-        "module": "nodenext",
-        "outDir": "lib",
-        "types": [ "node", "mocha" ],
-        "sourceMap": true,
-        "strict": true,
-        "resolveJsonModule": true,
-        "noEmitOnError": false,
-    }
+  "compilerOptions": {
+    "module": "nodenext",
+    "outDir": "lib",
+    "types": ["node", "mocha"],
+    "sourceMap": true,
+    "strict": true,
+    "resolveJsonModule": true,
+        "allowJs": true,
+        "checkJs": true,
+    "noEmit": true
+  }
 }

@@ -8,15 +8,11 @@
       "type": "pwa-node",
       "request": "launch",
       "name": "Launch Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "args": ["../../Music"],
       "program": "${workspaceFolder}/src/cli.ts",
       //"preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": [
-        "${workspaceFolder}/lib/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/lib/**/*.js"]
     }
   ]
 }
