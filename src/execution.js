@@ -50,6 +50,7 @@ export async function executeDldldl(workingDir) {
 async function parseConfig(ctx) {
   const ConfigFileSchema = zod.object({
     playlists: zod.record(zod.string()),
+    concurrency: zod.number().min(1).optional()
   });
 
   const config = ConfigFileSchema.parse(
@@ -65,6 +66,7 @@ async function parseConfig(ctx) {
   }
 
   ctx.playlists = config.playlists;
+  ctx.concurrency = config.concurrency;
 }
 
 /**  @param {TaskContext} ctx
@@ -137,7 +139,7 @@ async function downloadAndConvert(ctx, task) {
   const playlistUrl = new URL(ctx.playlists[ctx.playlistName]);
   const playlistType = util.getPlaylistType(playlistUrl);
 
-  const workQueue = new PQueue({ concurrency: 3 });
+  const workQueue = new PQueue({ concurrency: ctx.concurrency ?? 3 });
 
   const errors = [];
   let remaining = ctx.itemsToDownload.length;

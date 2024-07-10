@@ -7,4 +7,5 @@ export type TaskContext = {
   playlistName?: string;
   playlistUrl?: string;
   itemsToDownload?: PlaylistItem[];
+  concurrency?: number;
 };
