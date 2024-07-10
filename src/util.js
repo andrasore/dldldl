@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import path from "node:path";
-/** @typedef {import("./playlists.js").PlaylistType} PlaylistType */
+/** @import { PlaylistType } from "./playlists.js" */
 
 /**  @param {string} dir */
 export async function collectMp3s(dir) {

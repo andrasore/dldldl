@@ -9,7 +9,7 @@ import PQueue from "p-queue";
 import { Command } from "commander";
 import packageJson from "../package.json" with { type: "json" };
 import zod from "zod";
-/** @typedef {import("./playlists.js").PlaylistType} PlaylistType */
+/** @import { PlaylistType, PlaylistItem } from "./playlists.js" */
 
 const program = new Command();
 
@@ -69,7 +69,10 @@ util
       );
     }
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err))
+  .then(() => {
+    console.log('Done');
+  });
 
 /**  @param {string} name
  *  @param {string} url
@@ -90,38 +93,51 @@ async function downloadPlaylist(name, url, type, targetDir, existingTracks) {
   }
 
   console.log(`Playlist ${name} has ${items.length} items.`);
+  console.log();
 
-  for (const item of items) {
+  const tasks = items
+        .filter(item => {
+          const filename = util.convertToSafePath(item.title);
+          if (existingTracks.has(filename + ".mp3")) {
+            return false;
+          }
+          console.log(`Found new track: "${filename}"`);
+          return true;
+        }).map(item => () => downloadAndConvert(item, targetDir, type))
+
+  workQueue.on('completed', (result) => {
+    //process.stdout.clearLine(0);
+    //process.stdout.write(`Remaining: ${workQueue.pending}/${workQueue.size} (Completed "${result.title}")`)
+    console.log(`Remaining: ${workQueue.pending}/${workQueue.size} (Completed "${result.title}")`)
+  });
+
+  workQueue.on('error', (error) => console.log(error));
+
+  await workQueue.addAll(tasks);
+}
+
+/**  @param {PlaylistItem} item
+ *  @param {PlaylistType} type
+ *  @param {string} targetDir */
+async function downloadAndConvert(item, targetDir, type) {
     const filename = util.convertToSafePath(item.title);
-    if (existingTracks.has(filename + ".mp3")) {
-      continue;
+
+    const videoPath = path.join(targetDir, filename + ".mp4");
+    const audioPath = path.join(targetDir, filename + ".mp3");
+
+    switch (type) {
+      case "YOUTUBE": {
+        await youtube.downloadYoutube(item.url, videoPath);
+        break;
+      }
+      case "SOUNDCLOUD": {
+        await soundcloud.downloadSoundcloud(item.url, videoPath);
+        break;
+      }
     }
 
-    console.log(`Found new track: "${filename}"`);
+    await mp3s.convertVideoToMp3(videoPath, audioPath);
+    await fs.remove(videoPath);
 
-    /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
-    workQueue.add(async () => {
-      const videoPath = path.join(targetDir, filename + ".mp4");
-      const audioPath = path.join(targetDir, filename + ".mp3");
-
-      try {
-        switch (type) {
-          case "YOUTUBE": {
-            await youtube.downloadYoutube(item.url, videoPath);
-            break;
-          }
-          case "SOUNDCLOUD": {
-            await soundcloud.downloadSoundcloud(item.url, videoPath);
-            break;
-          }
-        }
-
-        await mp3s.convertVideoToMp3(videoPath, audioPath);
-        await fs.remove(videoPath);
-        console.log(`Track "${filename}" is ready.`);
-      } catch (err) {
-        console.error(`Error when processing track: ${item.title}`);
-      }
-    });
-  }
+    return item;
 }

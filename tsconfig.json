@@ -2,12 +2,13 @@
   "compilerOptions": {
     "module": "nodenext",
     "outDir": "lib",
-    "types": ["node", "mocha"],
+    "types": ["node"],
     "sourceMap": true,
     "strict": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
+    "skipLibCheck": true,
     "noEmit": true
   }
 }
