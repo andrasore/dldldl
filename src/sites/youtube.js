@@ -1,4 +1,4 @@
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 import fs from "fs-extra";
 import ytpl from "ytpl";
 /** @typedef {import("../playlists.js").PlaylistItem} PlaylistItem */

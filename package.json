@@ -17,12 +17,13 @@
   "author": "Andras Sore",
   "license": "ISC",
   "dependencies": {
+    "@distube/ytdl-core": "^4.13.5",
     "commander": "^12.1.0",
     "ffmpeg-static": "^5.2.0",
     "fs-extra": "^11.2.0",
+    "listr2": "^8.2.3",
     "p-queue": "^8.0.1",
     "soundcloud.ts": "^0.5.3",
-    "ytdl-core": "^4.11.5",
     "ytpl": "^2.3.0",
     "zod": "^3.23.8"
   },
