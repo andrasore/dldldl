@@ -3,4 +3,4 @@ export interface PlaylistItem {
   url: string;
 }
 
-export type PlaylistType = "YOUTUBE" | "SOUNDCLOUD";
+export type PlaylistType = "YOUTUBE" | "SOUNDCLOUD" | "SOUNDCLOUD_USER";

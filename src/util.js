@@ -42,6 +42,10 @@ export function getPlaylistType(url) {
       if (url?.pathname.includes("/sets/")) {
         return "SOUNDCLOUD";
       }
+
+      if (/\w+/.test(url?.pathname)) {
+        return "SOUNDCLOUD_USER";
+      }
     }
   }
   throw new Error(`Invalid playlist url: ${url.toString()}`);

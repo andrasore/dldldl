@@ -108,10 +108,21 @@ async function downloadPlaylistMetadata(ctx, task) {
   const playlistUrl = new URL(ctx.playlists[ctx.playlistName]);
   const playlistType = util.getPlaylistType(playlistUrl);
 
-  const items =
-    playlistType === "YOUTUBE"
-      ? await youtube.getPlaylistItems(playlistUrl.toString())
-      : await soundcloud.getPlaylistItems(playlistUrl.toString());
+  /** @type {PlaylistItem[]} */
+  let items;
+  switch (playlistType) {
+    case 'YOUTUBE':
+      items = await youtube.getPlaylistItems(playlistUrl);
+      break;
+    case 'SOUNDCLOUD':
+      items = await soundcloud.getPlaylistItems(playlistUrl);
+      break;
+    case 'SOUNDCLOUD_USER':
+      items = await soundcloud.getUserTracks(playlistUrl);
+      break;
+    default:
+      throw new Error('This should not happen.');
+  }
 
   const newItems = items.filter((item) => {
     assert(ctx.mp3collection);
@@ -158,6 +169,10 @@ async function downloadAndConvert(ctx, task) {
             break;
           }
           case "SOUNDCLOUD": {
+            await soundcloud.downloadSoundcloud(item.url, videoPath);
+            break;
+          }
+          case "SOUNDCLOUD_USER": {
             await soundcloud.downloadSoundcloud(item.url, videoPath);
             break;
           }

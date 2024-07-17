@@ -15,11 +15,10 @@ export async function downloadYoutube(url, targetFile) {
   });
 }
 
-/**  @param {string} url
+/**  @param {URL} url
  *  @returns {Promise<PlaylistItem[]>} */
 export async function getPlaylistItems(url) {
-  const urlObj = new URL(url);
-  const playlistId = urlObj.searchParams.get("list");
+  const playlistId = url.searchParams.get("list");
   if (playlistId === null) {
     throw new Error(`Playlist url "${url}" doesn't have a list id!`);
   }
