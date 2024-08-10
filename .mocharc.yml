@@ -1,4 +1,0 @@
-file:
-  - ./lib/test/smoketest.js
-timeout: 30000
-require: "source-map-support/register"
