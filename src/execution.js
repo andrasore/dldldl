@@ -32,6 +32,7 @@ export async function executeDldldl(workingDir) {
           Object.keys(ctx.playlists).map((name) => ({
             title: name,
             task: processPlaylist,
+            exitOnError: false,
           })),
           { ctx },
         );
