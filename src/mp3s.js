@@ -2,9 +2,11 @@
 
 import path from "node:path";
 import util from "node:util";
+import fs from "fs-extra";
 import * as child_process from "node:child_process";
 import ffmpegStatic from "ffmpeg-static";
 const execFile = util.promisify(child_process.execFile);
+const exec = util.promisify(child_process.exec);
 
 /**  @param {string} inputFile
  *  @param {string} outputFile */
@@ -24,10 +26,10 @@ export async function convertVideoToMp3(inputFile, outputFile) {
 
   const cwd = path.dirname(outputFile);
 
-  if (!ffmpegStatic) {
-    throw new Error("ffmpeg-static not found!");
+  if (await fs.exists(ffmpegStatic)) {
+    await execFile(ffmpegStatic, args, { cwd });
   }
-
-  // @ts-expect-error type of ffmpegStatic is import(...) instead of string
-  await execFile(ffmpegStatic, args, { cwd });
+  else {
+    await exec("ffmpeg", args, { cwd });
+  }
 }
