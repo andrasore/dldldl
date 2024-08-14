@@ -91,6 +91,10 @@ async function processPlaylist(ctx, task) {
       {
         title: "Downloading and converting songs.",
         task: downloadAndConvert,
+        rollback: async (ctx) => {
+          const targetDir = path.join(ctx.workingDir, ctx.playlistName);
+          await util.deleteMp4s(targetDir);
+        }
       },
     ],
     { ctx: { ...ctx, playlistName } },

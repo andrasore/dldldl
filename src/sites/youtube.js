@@ -1,5 +1,5 @@
+import { createWriteStream } from "node:fs";
 import ytdl from "@distube/ytdl-core";
-import fs from "fs-extra";
 import ytpl from "ytpl";
 /**  @import { PlaylistItem } from "../playlists.js" */
 
@@ -11,7 +11,7 @@ export async function downloadYoutube(url, targetFile) {
     ytdl(url, { quality: "highestaudio" })
       .on("end", () => resolve())
       .on("error", reject)
-      .pipe(fs.createWriteStream(targetFile));
+      .pipe(createWriteStream(targetFile));
   });
 }
 
