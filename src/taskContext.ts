@@ -1,4 +1,4 @@
-import { PlaylistItem } from "./playlists.js";
+import { type PlaylistItem } from "./playlists.ts";
 
 export type TaskContext = {
   workingDir: string;

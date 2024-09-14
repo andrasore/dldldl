@@ -6,9 +6,9 @@
     "sourceMap": true,
     "strict": true,
     "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true
   }
 }

@@ -1,20 +1,18 @@
-import { Listr } from "listr2";
+import { Listr, type ListrTaskWrapper } from "listr2";
 import zod from "zod";
 import fs from "fs-extra";
 import path from "node:path";
-import { collectMp3s } from "./util.js";
-import * as util from "./util.js";
-import * as youtube from "./sites/youtube.js";
-import * as soundcloud from "./sites/soundcloud.js";
-import * as mp3s from "./mp3s.js";
 import PQueue from "p-queue";
 import assert from "node:assert";
-/** @import { PlaylistType, PlaylistItem } from "./playlists.js" */
-/** @import { TaskContext } from "./taskContext.js" */
-/** @import { DefaultRenderer, ListrTaskWrapper } from "listr2" */
+import { collectMp3s } from "./util.ts";
+import * as util from "./util.ts";
+import * as youtube from "./sites/youtube.ts";
+import * as soundcloud from "./sites/soundcloud.ts";
+import * as mp3s from "./mp3s.ts";
+import { type TaskContext } from "./taskContext.ts";
+import { type PlaylistItem } from "./playlists.ts";
 
-/**  @param {string} workingDir */
-export async function executeDldldl(workingDir) {
+export async function executeDldldl(workingDir: string) {
   const tasks = new Listr([
     {
       title: "Parsing config.",
@@ -47,11 +45,10 @@ export async function executeDldldl(workingDir) {
   }
 }
 
-/**  @param {TaskContext} ctx */
-async function parseConfig(ctx) {
+async function parseConfig(ctx: TaskContext) {
   const ConfigFileSchema = zod.object({
     playlists: zod.record(zod.string()),
-    concurrency: zod.number().min(1).optional()
+    concurrency: zod.number().min(1).optional(),
   });
 
   const config = ConfigFileSchema.parse(
@@ -70,17 +67,19 @@ async function parseConfig(ctx) {
   ctx.concurrency = config.concurrency;
 }
 
-/**  @param {TaskContext} ctx
- *   @param {ListrTaskWrapper<TaskContext, any, any>} task */
-async function readLibrary(ctx, task) {
+async function readLibrary(
+  ctx: TaskContext,
+  task: ListrTaskWrapper<TaskContext, any, any>,
+) {
   const mp3s = await collectMp3s(ctx.workingDir);
   ctx.mp3collection = new Set(mp3s);
   task.title = `${ctx.mp3collection.size} tracks found.`;
 }
 
-/**  @param {TaskContext} ctx
- *   @param {ListrTaskWrapper<TaskContext, any, any>} task */
-async function processPlaylist(ctx, task) {
+async function processPlaylist(
+  ctx: TaskContext,
+  task: ListrTaskWrapper<TaskContext, any, any>,
+) {
   const playlistName = task.title; // hacky but the name is there
   return task.newListr(
     [
@@ -94,16 +93,17 @@ async function processPlaylist(ctx, task) {
         rollback: async (ctx) => {
           const targetDir = path.join(ctx.workingDir, ctx.playlistName);
           await util.deleteMp4s(targetDir);
-        }
+        },
       },
     ],
     { ctx: { ...ctx, playlistName } },
   );
 }
 
-/**  @param {TaskContext} ctx
- *   @param {ListrTaskWrapper<TaskContext, any, any>} task */
-async function downloadPlaylistMetadata(ctx, task) {
+async function downloadPlaylistMetadata(
+  ctx: TaskContext,
+  task: ListrTaskWrapper<TaskContext, any, any>,
+) {
   assert(ctx.playlists);
   assert(ctx.playlistName);
 
@@ -113,20 +113,19 @@ async function downloadPlaylistMetadata(ctx, task) {
   const playlistUrl = new URL(ctx.playlists[ctx.playlistName]);
   const playlistType = util.getPlaylistType(playlistUrl);
 
-  /** @type {PlaylistItem[]} */
-  let items;
+  let items: PlaylistItem[];
   switch (playlistType) {
-    case 'YOUTUBE':
+    case "YOUTUBE":
       items = await youtube.getPlaylistItems(playlistUrl);
       break;
-    case 'SOUNDCLOUD':
+    case "SOUNDCLOUD":
       items = await soundcloud.getPlaylistItems(playlistUrl);
       break;
-    case 'SOUNDCLOUD_USER':
+    case "SOUNDCLOUD_USER":
       items = await soundcloud.getUserTracks(playlistUrl);
       break;
     default:
-      throw new Error('This should not happen.');
+      throw new Error("This should not happen.");
   }
 
   const newItems = items.filter((item) => {
@@ -143,9 +142,10 @@ async function downloadPlaylistMetadata(ctx, task) {
   ctx.itemsToDownload = newItems;
 }
 
-/**  @param {TaskContext} ctx
- *   @param {ListrTaskWrapper<TaskContext, any, any>} task */
-async function downloadAndConvert(ctx, task) {
+async function downloadAndConvert(
+  ctx: TaskContext,
+  task: ListrTaskWrapper<TaskContext, any, any>,
+) {
   assert(ctx.playlists);
   assert(ctx.itemsToDownload);
   assert(ctx.playlistName);
@@ -159,7 +159,7 @@ async function downloadAndConvert(ctx, task) {
 
   const errors = [];
   let remaining = ctx.itemsToDownload.length;
-  task.title = `Downloading and converting ${remaining} songs.`
+  task.title = `Downloading and converting ${remaining} songs.`;
 
   await workQueue.addAll(
     ctx.itemsToDownload.map((item) => async () => {
@@ -190,9 +190,9 @@ async function downloadAndConvert(ctx, task) {
         await fs.remove(videoPath);
 
         remaining--;
-        task.title = `Downloading and converting ${remaining} songs.`
+        task.title = `Downloading and converting ${remaining} songs.`;
       } catch (err) {
-        task.output = `Error when processing "${filename}"`
+        task.output = `Error when processing "${filename}"`;
         errors.push(err);
         // TODO process errors
       }

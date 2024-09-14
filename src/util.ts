@@ -1,13 +1,13 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { glob } from "node:fs/promises";
-/** @import { PlaylistType } from "./playlists.js" */
+/** @import { PlaylistType } from "./playlists.ts" */
 
 /**  @param {string} dir */
 export async function collectMp3s(dir) {
   /**  @type {string[]} */
   const result = [];
-  for await (const item of glob('**/*.mp3')) {
+  for await (const item of glob("**/*.mp3")) {
     result.push(path.basename(item));
   }
   return result;
@@ -15,7 +15,7 @@ export async function collectMp3s(dir) {
 
 /**  @param {string} dir */
 export async function deleteMp4s(dir) {
-  for await (const item of glob('**/*.mp4')) {
+  for await (const item of glob("**/*.mp4")) {
     await fs.remove(item);
   }
 }

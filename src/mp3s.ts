@@ -1,5 +1,3 @@
-"use strict";
-
 import path from "node:path";
 import util from "node:util";
 import fs from "fs-extra";
@@ -8,9 +6,7 @@ import ffmpegStatic from "ffmpeg-static";
 const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
 
-/**  @param {string} inputFile
- *  @param {string} outputFile */
-export async function convertVideoToMp3(inputFile, outputFile) {
+export async function convertVideoToMp3(inputFile: string, outputFile: string) {
   const args = [
     "-i",
     inputFile, // input file
@@ -28,8 +24,7 @@ export async function convertVideoToMp3(inputFile, outputFile) {
 
   if (await fs.exists(ffmpegStatic)) {
     await execFile(ffmpegStatic, args, { cwd });
-  }
-  else {
+  } else {
     await exec("ffmpeg", args, { cwd });
   }
 }

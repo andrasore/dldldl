@@ -2,7 +2,7 @@
 import path from "node:path";
 import { Command } from "commander";
 import packageJson from "../package.json" with { type: "json" };
-import { executeDldldl } from "./execution.js";
+import { executeDldldl } from "./execution.ts";
 
 const program = new Command();
 

@@ -5,6 +5,7 @@
   "repository": "github:andrasore/dldldl",
   "type": "module",
   "scripts": {
+    "start": "node --experimental-transform-types src/cli.ts",
     "build": "tsc",
     "test": "node ./test/smoketest.js",
     "prettier:check": "prettier . -c",

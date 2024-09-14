@@ -1,7 +1,7 @@
 import { createWriteStream } from "node:fs";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
-/**  @import { PlaylistItem } from "../playlists.js" */
+/**  @import { PlaylistItem } from "../playlists.ts" */
 
 /**  @param {string} url
  *  @param {string} targetFile
