@@ -24,14 +24,13 @@
     "fs-extra": "^11.2.0",
     "listr2": "^8.2.3",
     "p-queue": "^8.0.1",
-    "soundcloud.ts": "^0.5.3",
+    "soundcloud.ts": "^0.6.1",
     "ytpl": "^2.3.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/ffmpeg-static": "^3.0.3",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.14.8",
+    "@types/node": "^22.5.5",
     "prettier": "^3.3.2",
     "typescript": "^5.5.3"
   }

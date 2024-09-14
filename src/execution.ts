@@ -13,7 +13,7 @@ import { type TaskContext } from "./taskContext.ts";
 import { type PlaylistItem } from "./playlists.ts";
 
 export async function executeDldldl(workingDir: string) {
-  const tasks = new Listr([
+  const tasks = new Listr<TaskContext>([
     {
       title: "Parsing config.",
       task: parseConfig,
@@ -81,7 +81,7 @@ async function processPlaylist(
   task: ListrTaskWrapper<TaskContext, any, any>,
 ) {
   const playlistName = task.title; // hacky but the name is there
-  return task.newListr(
+  return task.newListr<TaskContext & { playlistName: string }>(
     [
       {
         title: "Downloading playlist metadata.",
@@ -101,8 +101,8 @@ async function processPlaylist(
 }
 
 async function downloadPlaylistMetadata(
-  ctx: TaskContext,
-  task: ListrTaskWrapper<TaskContext, any, any>,
+  ctx: TaskContext & { playlistName: string },
+  task: ListrTaskWrapper<TaskContext & { playlistName: string }, any, any>,
 ) {
   assert(ctx.playlists);
   assert(ctx.playlistName);
@@ -143,8 +143,8 @@ async function downloadPlaylistMetadata(
 }
 
 async function downloadAndConvert(
-  ctx: TaskContext,
-  task: ListrTaskWrapper<TaskContext, any, any>,
+  ctx: TaskContext & { playlistName: string },
+  task: ListrTaskWrapper<TaskContext & { playlistName: string }, any, any>,
 ) {
   assert(ctx.playlists);
   assert(ctx.itemsToDownload);

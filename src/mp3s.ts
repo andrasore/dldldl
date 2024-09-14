@@ -1,3 +1,4 @@
+import z from "zod";
 import path from "node:path";
 import util from "node:util";
 import fs from "fs-extra";
@@ -22,9 +23,11 @@ export async function convertVideoToMp3(inputFile: string, outputFile: string) {
 
   const cwd = path.dirname(outputFile);
 
-  if (await fs.exists(ffmpegStatic)) {
-    await execFile(ffmpegStatic, args, { cwd });
+  const ffmpegStaticPath = z.string().parse(ffmpegStatic);
+
+  if (await fs.exists(ffmpegStaticPath)) {
+    await execFile(ffmpegStaticPath, args, { cwd });
   } else {
-    await exec("ffmpeg", args, { cwd });
+    await exec(`ffmpeg ${args.join(" ")}`, { cwd });
   }
 }

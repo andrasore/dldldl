@@ -1,12 +1,9 @@
 import { createWriteStream } from "node:fs";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
-/**  @import { PlaylistItem } from "../playlists.ts" */
+import { type PlaylistItem } from "../playlists.ts"
 
-/**  @param {string} url
- *  @param {string} targetFile
- *  @returns {Promise<void>} */
-export async function downloadYoutube(url, targetFile) {
+export async function downloadYoutube(url: string, targetFile: string): Promise<void> {
   return await new Promise((resolve, reject) => {
     ytdl(url, { quality: "highestaudio" })
       .on("end", () => resolve())
@@ -15,9 +12,7 @@ export async function downloadYoutube(url, targetFile) {
   });
 }
 
-/**  @param {URL} url
- *  @returns {Promise<PlaylistItem[]>} */
-export async function getPlaylistItems(url) {
+export async function getPlaylistItems(url: URL): Promise<PlaylistItem[]> {
   const playlistId = url.searchParams.get("list");
   if (playlistId === null) {
     throw new Error(`Playlist url "${url}" doesn't have a list id!`);
