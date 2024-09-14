@@ -159,7 +159,9 @@ async function downloadAndConvert(
 
   const errors = [];
   let remaining = ctx.itemsToDownload.length;
-  task.title = `Downloading and converting ${remaining} songs.`;
+  task.title = playlistType == 'YOUTUBE'
+    ? `Downloading and converting ${remaining} songs.`
+    :  `Downloading ${remaining} songs.`;
 
   await workQueue.addAll(
     ctx.itemsToDownload.map((item) => async () => {
@@ -174,16 +176,20 @@ async function downloadAndConvert(
             break;
           }
           case "SOUNDCLOUD": {
-            await soundcloud.downloadSoundcloud(item.url, videoPath);
+            await soundcloud.downloadSoundcloud(item.url, audioPath);
             break;
           }
           case "SOUNDCLOUD_USER": {
-            await soundcloud.downloadSoundcloud(item.url, videoPath);
+            await soundcloud.downloadSoundcloud(item.url, audioPath);
             break;
           }
         }
         task.output = `Downloaded "${filename}"`;
 
+        if (playlistType != 'YOUTUBE') {
+          remaining--;
+          return;
+        }
         await mp3s.convertVideoToMp3(videoPath, audioPath);
         task.output = `Converted "${filename}"`;
 
