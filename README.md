@@ -2,9 +2,8 @@
 
 ![CI](https://github.com/andrasore/dldldl/actions/workflows/node.js.yml/badge.svg)
 
-**dldldl** is a simple node utility for incrementally syncing your music
-playlists on various sites onto your hard drive. Currently it supports YouTube
-and Soundcloud.
+**dldldl** is a simple node utility for syncing your online music playlists to
+your computer. Currently it supports YouTube and Soundcloud.
 
 ## Usage
 
