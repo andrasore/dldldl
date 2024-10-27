@@ -1,4 +1,4 @@
-import fs from "fs-extra";
+import * as fs from "node:fs/promises";
 import path from "node:path";
 import { glob } from "node:fs/promises";
 import { type PlaylistType } from "./playlists.ts";
@@ -13,7 +13,7 @@ export async function collectMp3s(dir: string): Promise<string[]> {
 
 export async function deleteMp4s(dir: string) {
   for await (const item of glob("**/*.mp4", { cwd: dir })) {
-    await fs.remove(item);
+    await fs.unlink(item);
   }
 }
 
@@ -41,9 +41,7 @@ export function getPlaylistType(url: URL): PlaylistType {
   throw new Error(`Invalid playlist url: ${url.toString()}`);
 }
 
-// These are sure are bad for filesystem names!
-// For simplicity we only allow filenames that are both good on Windows and UN*Xes
-export const UnsafeChars = /["\\/:*?<>|]/g;
+export const UnsafeChars = /[":*?<>|]/g;
 
 export function isBadFilename(s: string) {
   return UnsafeChars.test(s);

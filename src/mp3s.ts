@@ -1,8 +1,8 @@
-import z from "zod";
 import path from "node:path";
 import util from "node:util";
-import fs from "fs-extra";
+import fs from "node:fs/promises";
 import * as child_process from "node:child_process";
+import z from "zod";
 import ffmpegStatic from "ffmpeg-static";
 const execFile = util.promisify(child_process.execFile);
 const exec = util.promisify(child_process.exec);
@@ -25,7 +25,7 @@ export async function convertVideoToMp3(inputFile: string, outputFile: string) {
 
   const ffmpegStaticPath = z.string().parse(ffmpegStatic);
 
-  if (await fs.exists(ffmpegStaticPath)) {
+  if ((await fs.stat(ffmpegStaticPath)).isFile()) {
     await execFile(ffmpegStaticPath, args, { cwd });
   } else {
     await exec(`ffmpeg ${args.join(" ")}`, { cwd });

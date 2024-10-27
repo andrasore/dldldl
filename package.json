@@ -12,19 +12,16 @@
     "prettier:fix": "prettier . -w",
     "all": "npm run prettier:check && npm run build && npm run test"
   },
-  "bin": {
-    "dldldl": "src/cli.js"
-  },
   "author": "Andras Sore",
   "license": "ISC",
   "dependencies": {
     "@distube/ytdl-core": "latest",
     "commander": "^12.1.0",
     "ffmpeg-static": "^5.2.0",
-    "fs-extra": "^11.2.0",
     "listr2": "^8.2.3",
     "p-queue": "^8.0.1",
     "soundcloud.ts": "^0.6.1",
+    "yaml": "^2.6.0",
     "ytpl": "^2.3.0",
     "zod": "^3.23.8"
   },

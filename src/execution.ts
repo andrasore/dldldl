@@ -1,9 +1,11 @@
+import * as fs from "node:fs";
+import * as fsPromises from "node:fs/promises";
+import path from "node:path";
+import assert from "node:assert";
 import { Listr, type ListrTaskWrapper } from "listr2";
 import zod from "zod";
-import fs from "fs-extra";
-import path from "node:path";
 import PQueue from "p-queue";
-import assert from "node:assert";
+import * as yaml from "yaml";
 import { collectMp3s } from "./util.ts";
 import * as util from "./util.ts";
 import * as youtube from "./sites/youtube.ts";
@@ -27,8 +29,8 @@ export async function executeDldldl(workingDir: string) {
       task: (ctx, task) => {
         assert(ctx.playlists); // We just put it there
         return task.newListr(
-          Object.keys(ctx.playlists).map((name) => ({
-            title: name,
+          ctx.playlists.map(p => ({
+            title: p.name,
             task: processPlaylist,
             exitOnError: false,
           })),
@@ -45,23 +47,41 @@ export async function executeDldldl(workingDir: string) {
   }
 }
 
-async function parseConfig(ctx: TaskContext) {
+async function parseConfig(
+  ctx: TaskContext,
+  task: ListrTaskWrapper<TaskContext, any, any>,
+) {
   const ConfigFileSchema = zod.object({
-    playlists: zod.record(zod.string()),
+    playlists: zod
+      .object({
+        name: zod.string(),
+        url: zod.string().url(),
+        path: zod.string().refine((val) => !util.isBadFilename(val), {
+          message: `Playlist url cannot contain any of these chars: ${util.UnsafeChars.toString()}`,
+        }),
+      })
+      .array(),
     concurrency: zod.number().min(1).optional(),
   });
 
-  const config = ConfigFileSchema.parse(
-    fs.readJSONSync(path.join(ctx.workingDir, "dldldl.json")),
-  );
+  const workingDirContent = await fsPromises.readdir(ctx.workingDir);
 
-  for (const name of Object.keys(config.playlists)) {
-    if (util.isBadFilename(name)) {
-      throw new Error(
-        `Playlist name "${name}" contains one or more of "${util.UnsafeChars.toString()}" chars! Please fix it!`,
-      );
-    }
+  const configName = workingDirContent.includes("dldldl.yml") && "dldldl.yml";
+  (workingDirContent.includes("dldldl.yaml") && "dldldl.yaml") || undefined;
+
+  if (!configName) {
+    throw new Error(
+      '"dldldl.yml" or "dldldl.yaml" not found in music library!',
+    );
   }
+
+  const config = ConfigFileSchema.parse(
+    yaml.parse(
+      await fsPromises.readFile(path.join(ctx.workingDir, configName), {
+        encoding: "utf8",
+      }),
+    ),
+  );
 
   ctx.playlists = config.playlists;
   ctx.concurrency = config.concurrency;
@@ -108,9 +128,13 @@ async function downloadPlaylistMetadata(
   assert(ctx.playlistName);
 
   const targetDir = path.join(ctx.workingDir, ctx.playlistName);
-  await fs.ensureDir(targetDir);
+  if (!fs.existsSync(targetDir)) {
+    await fsPromises.mkdir(targetDir);
+  }
 
-  const playlistUrl = new URL(ctx.playlists[ctx.playlistName]);
+  const playlistUrl = new URL(
+    ctx.playlists.find(p => p.name === ctx.playlistName)!.url,
+  );
   const playlistType = util.getPlaylistType(playlistUrl);
 
   let items: PlaylistItem[];
@@ -152,16 +176,17 @@ async function downloadAndConvert(
 
   // TODO extract these somewhere
   const targetDir = path.join(ctx.workingDir, ctx.playlistName);
-  const playlistUrl = new URL(ctx.playlists[ctx.playlistName]);
+  const playlistUrl = new URL(ctx.playlists.find(p => p.name === ctx.playlistName)!.url);
   const playlistType = util.getPlaylistType(playlistUrl);
 
   const workQueue = new PQueue({ concurrency: ctx.concurrency ?? 3 });
 
   const errors = [];
   let remaining = ctx.itemsToDownload.length;
-  task.title = playlistType == 'YOUTUBE'
-    ? `Downloading and converting ${remaining} songs.`
-    :  `Downloading ${remaining} songs.`;
+  task.title =
+    playlistType == "YOUTUBE"
+      ? `Downloading and converting ${remaining} songs.`
+      : `Downloading ${remaining} songs.`;
 
   await workQueue.addAll(
     ctx.itemsToDownload.map((item) => async () => {
@@ -186,14 +211,14 @@ async function downloadAndConvert(
         }
         task.output = `Downloaded "${filename}"`;
 
-        if (playlistType != 'YOUTUBE') {
+        if (playlistType != "YOUTUBE") {
           remaining--;
           return;
         }
         await mp3s.convertVideoToMp3(videoPath, audioPath);
         task.output = `Converted "${filename}"`;
 
-        await fs.remove(videoPath);
+        await fsPromises.unlink(videoPath);
 
         remaining--;
         task.title = `Downloading and converting ${remaining} songs.`;

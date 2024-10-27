@@ -1,9 +1,12 @@
 import { createWriteStream } from "node:fs";
 import ytdl from "@distube/ytdl-core";
 import ytpl from "ytpl";
-import { type PlaylistItem } from "../playlists.ts"
+import { type PlaylistItem } from "../playlists.ts";
 
-export async function downloadYoutube(url: string, targetFile: string): Promise<void> {
+export async function downloadYoutube(
+  url: string,
+  targetFile: string,
+): Promise<void> {
   return await new Promise((resolve, reject) => {
     ytdl(url, { quality: "highestaudio" })
       .on("end", () => resolve())

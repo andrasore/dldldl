@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { promisify } from "util";
 import { pipeline } from "stream";
 import { Soundcloud } from "soundcloud.ts";
-import { type PlaylistItem } from "../playlists.ts"
+import { type PlaylistItem } from "../playlists.ts";
 
 const pipelinePromise = promisify(pipeline);
 

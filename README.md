@@ -8,39 +8,32 @@ and Soundcloud.
 
 ## Usage
 
-Start with `node src/cli.js <library path>`.
-
-Alternatively you can use `npm link` to link the repo folder to the global
-node_modules directory. After doing so, you can start with `dldldl`.
+Start with `npm run start <library path>`.
 
 ## Configuration
 
 Pick a folder for storing the music library.
 
-A config JSON file is required into the libary folder, called
-`<library path>/dldldl.json`.
+A config YML file is required into the libary folder, called
+`<library path>/dldldl.yml` or `<library path>/dldldl.yaml`.
 
-The config JSON file should have a "playlists" field with the playlist names and
-URLs listed as key-value pairs.
-
-The playlist names are arbitrary, and are also used as folder names for downloading music.
-
-Example:
+Config example:
 
 ```
-  {
-    "playlists": {
-      "MyPlaylistName1": "https://youtube.com/playlist?list=<playlist id>",
-      "MyPlaylistName2": "https://soundcloud.com/user/<user>/sets/<playlist name>"
-    }
-  }
+  playlists:
+    - name: MyPlaylist1
+      url: "https://youtube.com/playlist?list=<playlist id>"
+      path: "./MyPlaylist1"
+    - name: MyPlaylist2
+      url: "https://soundcloud.com/user/<user>/sets/<playlist name>"
+      path: "./MyPlaylist2"
 ```
 
 This will result in the following folder structure:
 
 ```
-  <libarary path>/MyPlaylistName1/...
-  <libarary path>/MyPlaylistName2/...
+  <libarary path>/MyPlaylist1/...
+  <libarary path>/MyPlaylist2/...
 ```
 
 ## Music library
