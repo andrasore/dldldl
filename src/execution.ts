@@ -57,7 +57,7 @@ async function parseConfig(
         name: zod.string(),
         url: zod.string().url(),
         path: zod.string().refine((val) => !util.isBadFilename(val), {
-          message: `Playlist url cannot contain any of these chars: ${util.UnsafeChars.toString()}`,
+          message: `Playlist path cannot contain any of these chars: ${util.UnsafeCharsForPath.toString()}`,
         }),
       })
       .array(),
@@ -154,7 +154,7 @@ async function downloadPlaylistMetadata(
 
   const newItems = items.filter((item) => {
     assert(ctx.mp3collection);
-    const filename = util.convertToSafePath(item.title);
+    const filename = util.convertToFilename(item.title);
     if (ctx.mp3collection.has(filename + ".mp3")) {
       return false;
     }
@@ -190,7 +190,7 @@ async function downloadAndConvert(
 
   await workQueue.addAll(
     ctx.itemsToDownload.map((item) => async () => {
-      const filename = util.convertToSafePath(item.title);
+      const filename = util.convertToFilename(item.title);
       try {
         const videoPath = path.join(targetDir, filename + ".mp4");
         const audioPath = path.join(targetDir, filename + ".mp3");

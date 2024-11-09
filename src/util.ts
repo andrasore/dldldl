@@ -41,12 +41,14 @@ export function getPlaylistType(url: URL): PlaylistType {
   throw new Error(`Invalid playlist url: ${url.toString()}`);
 }
 
-export const UnsafeChars = /[":*?<>|]/g;
+export const UnsafeCharsForPath = /[":*?<>|]/g;
 
 export function isBadFilename(s: string) {
-  return UnsafeChars.test(s);
+  return UnsafeCharsForPath.test(s);
 }
 
-export function convertToSafePath(p: string) {
-  return p.replace(UnsafeChars, "").normalize();
+const UnsafeCharsForFilename = /[":*?<>|]\\\//g;
+
+export function convertToFilename(p: string) {
+  return p.replace(UnsafeCharsForFilename, "").normalize();
 }
