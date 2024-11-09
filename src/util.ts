@@ -47,7 +47,7 @@ export function isBadFilename(s: string) {
   return UnsafeCharsForPath.test(s);
 }
 
-const UnsafeCharsForFilename = /[":*?<>|]\\\//g;
+const UnsafeCharsForFilename = /[":*?<>|\\\/]/g;
 
 export function convertToFilename(p: string) {
   return p.replace(UnsafeCharsForFilename, "").normalize();
