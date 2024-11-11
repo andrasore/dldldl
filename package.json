@@ -18,7 +18,7 @@
     "@distube/ytdl-core": "latest",
     "commander": "^12.1.0",
     "ffmpeg-static": "^5.2.0",
-    "listr2": "^8.2.3",
+    "nanospinner": "^1.2.0",
     "p-queue": "^8.0.1",
     "soundcloud.ts": "^0.6.1",
     "yaml": "^2.6.0",
@@ -26,7 +26,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.5.5",
     "prettier": "^3.3.2",
     "typescript": "^5.5.3"
