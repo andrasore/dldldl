@@ -55,7 +55,7 @@ async function parseConfig(
       })
       .array(),
     concurrency: zod.number().min(1).optional(),
-  });
+  }).strict();
 
   const workingDirContent = await fsPromises.readdir(workingDir);
 
@@ -68,13 +68,19 @@ async function parseConfig(
     );
   }
 
-  const config = ConfigFileSchema.parse(
-    yaml.parse(
-      await fsPromises.readFile(path.join(workingDir, configName), {
-        encoding: "utf8",
-      }),
-    ),
-  );
+  let config;
+  try {
+    config = ConfigFileSchema.parse(
+      yaml.parse(
+        await fsPromises.readFile(path.join(workingDir, configName), {
+          encoding: "utf8",
+        }),
+      ),
+    );
+  }
+  catch (err) {
+    throw new Error('Failed to parse config file!', { cause: err });
+  }
 
   return config;
 }
