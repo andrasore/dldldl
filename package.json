@@ -15,7 +15,7 @@
   "author": "Andras Sore",
   "license": "ISC",
   "dependencies": {
-    "@distube/ytdl-core": "latest",
+    "@distube/ytdl-core": "^4.15.1",
     "commander": "^12.1.0",
     "ffmpeg-static": "^5.2.0",
     "nanospinner": "^1.2.0",

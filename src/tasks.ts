@@ -30,8 +30,8 @@ type ParallelTaskOptions = {
 }
 
 export async function wrapParallelTasks(
-    taskFns: (() => Promise<void>)[],
-    { title, concurrency }: ParallelTaskOptions): Promise<Error[] | void> {
+    taskFns: (() => Promise<void | Error>)[],
+    { title, concurrency }: ParallelTaskOptions): Promise<void | Error[]> {
 
     let done = 0;
     const workQueue = new PQueue({ concurrency });
@@ -39,16 +39,9 @@ export async function wrapParallelTasks(
     const errors: Error[] = [];
 
     await workQueue.addAll(taskFns.map(taskFn => async () => {
-        try {
-           await taskFn();
-        }
-        catch (err) {
-            if (err instanceof Error) {
-                errors.push(err);
-            }
-            else {
-                throw err;
-            }
+        const result = await taskFn();
+        if (result instanceof Error) {
+            errors.push(result);
         }
         done++;
         spinner.update({ text: `${title} (${done}/${taskFns.length})`});

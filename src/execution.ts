@@ -20,20 +20,23 @@ export async function executeDldldl(workingDir: string) {
 
   for (const playlist of config.playlists) {
     const targetDir = playlist.path ?? path.join(workingDir, util.convertToFilename(playlist.name));
-    try {
-      const newItems = await wrapTask(downloadPlaylistMetadata, { title: `Downloading metadata for "${playlist.name}"` })({ playlist, targetDir, mp3s });
-      const dlErrors = await downloadAndConvert({
-        targetDir,
-        playlist,
-        concurrency: config.concurrency ?? 3,
-        newItems
-      });
-      if (dlErrors instanceof Array) {
-        errors.push(...dlErrors);
-      }
+    const newItems = await wrapTask(downloadPlaylistMetadata, { title: `Downloading metadata for "${playlist.name}"` })({ playlist, targetDir, mp3s });
+    const dlErrors = await downloadAndConvert({
+      targetDir,
+      playlist,
+      concurrency: config.concurrency ?? 3,
+      newItems
+    });
+    if (dlErrors instanceof Array) {
+      errors.push(...dlErrors);
     }
-    catch (err) {
-      console.error(err);
+  }
+
+  // These errors may happen while doing the conversion
+  if (errors.length > 0) {
+    console.error(`${errors.length} errors happened while converting`)
+    for (const err of errors) {
+      console.log(err);
     }
   }
 }
@@ -127,7 +130,7 @@ async function downloadPlaylistMetadata(
 
 async function downloadAndConvert(
   { targetDir, playlist, concurrency, newItems }: { targetDir: string, playlist: Playlist, concurrency: number, newItems: PlaylistItem[] }
-) {
+): Promise<void | Error[]> {
   const playlistUrl = new URL(playlist.url);
   const playlistType = util.getPlaylistType(playlistUrl);
 
@@ -137,24 +140,36 @@ async function downloadAndConvert(
       const videoPath = path.join(targetDir, filename + ".mp4");
       const audioPath = path.join(targetDir, filename + ".mp3");
 
-      switch (playlistType) {
-        case "YOUTUBE": {
-          await youtube.downloadYoutube(item.url, videoPath);
-          break;
-        }
-        case "SOUNDCLOUD": {
-          await soundcloud.downloadSoundcloud(item.url, audioPath);
-          break;
-        }
-        case "SOUNDCLOUD_USER": {
-          await soundcloud.downloadSoundcloud(item.url, audioPath);
-          break;
+      try {
+        switch (playlistType) {
+          case "YOUTUBE": {
+            await youtube.downloadYoutube(item.url, videoPath);
+            break;
+          }
+          case "SOUNDCLOUD": {
+            await soundcloud.downloadSoundcloud(item.url, audioPath);
+            break;
+          }
+          case "SOUNDCLOUD_USER": {
+            await soundcloud.downloadSoundcloud(item.url, audioPath);
+            break;
+          }
         }
       }
+      catch (err) {
+        return Error(`Failed to download ${item.title}`, { cause: err });
+      }
+
       if (playlistType == "YOUTUBE") {
-        await mp3s.convertVideoToMp3(videoPath, audioPath);
-        await fsPromises.unlink(videoPath);
+        try {
+          await mp3s.convertVideoToMp3(videoPath, audioPath);
+          await fsPromises.unlink(videoPath);
+        }
+        catch (err) {
+          return Error(`Failed to convert ${item.title}`, { cause: err });
+        }
       }
+      return;
     }),
     { title: `Downloading and converting "${playlist.name}"`, concurrency }
   );
