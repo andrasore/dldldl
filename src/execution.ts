@@ -2,14 +2,13 @@ import * as fs from "node:fs";
 import * as fsPromises from "node:fs/promises";
 import path from "node:path";
 import zod from "zod";
-import PQueue from "p-queue";
 import * as yaml from "yaml";
 import { collectMp3s } from "./util.ts";
 import * as util from "./util.ts";
 import * as youtube from "./sites/youtube.ts";
 import * as soundcloud from "./sites/soundcloud.ts";
 import * as mp3s from "./mp3s.ts";
-import { wrapTask } from './tasks.ts';
+import { wrapParallelTasks, wrapTask } from './tasks.ts';
 import { type PlaylistItem } from "./playlists.ts";
 
 export async function executeDldldl(workingDir: string) {
@@ -17,11 +16,21 @@ export async function executeDldldl(workingDir: string) {
 
   const mp3s = await wrapTask(readLibrary, { title: 'Reading library' })({ workingDir });
 
+  const errors = [];
+
   for (const playlist of config.playlists) {
     const targetDir = playlist.path ?? path.join(workingDir, util.convertToFilename(playlist.name));
     try {
       const newItems = await wrapTask(downloadPlaylistMetadata, { title: `Downloading metadata for "${playlist.name}"` })({ playlist, targetDir, mp3s });
-      await wrapTask(downloadAndConvert, { title: `Downloading and converting ${newItems.length} songs.`})({ targetDir, playlist, concurrency: config.concurrency ?? 3, newItems});
+      const dlErrors = await downloadAndConvert({
+        targetDir,
+        playlist,
+        concurrency: config.concurrency ?? 3,
+        newItems
+      });
+      if (dlErrors instanceof Array) {
+        errors.push(...dlErrors);
+      }
     }
     catch (err) {
       console.error(err);
@@ -72,8 +81,6 @@ async function readLibrary(
 ) {
   const mp3s = await collectMp3s(workingDir);
   return new Set(mp3s);
-  // TODO print track count
-  // task.title = `${ctx.mp3collection.size} tracks found.`;
 }
 
 interface Playlist {
@@ -115,67 +122,40 @@ async function downloadPlaylistMetadata(
     return true;
   });
 
-  // task.title = `Found ${newItems.length} new songs.`;
-
   return newItems;
 }
 
 async function downloadAndConvert(
   { targetDir, playlist, concurrency, newItems }: { targetDir: string, playlist: Playlist, concurrency: number, newItems: PlaylistItem[] }
 ) {
-  // TODO extract these somewhere
   const playlistUrl = new URL(playlist.url);
   const playlistType = util.getPlaylistType(playlistUrl);
 
-  const workQueue = new PQueue({ concurrency });
-
-  const errors = [];
-  let remaining = newItems.length;
-  /*
-  task.title =
-    playlistType == "YOUTUBE"
-      ? `Downloading and converting ${remaining} songs.`
-      : `Downloading ${remaining} songs.`;
-  */
-  await workQueue.addAll(
+  return wrapParallelTasks(
     newItems.map((item) => async () => {
       const filename = util.convertToFilename(item.title);
-      try {
-        const videoPath = path.join(targetDir, filename + ".mp4");
-        const audioPath = path.join(targetDir, filename + ".mp3");
+      const videoPath = path.join(targetDir, filename + ".mp4");
+      const audioPath = path.join(targetDir, filename + ".mp3");
 
-        switch (playlistType) {
-          case "YOUTUBE": {
-            await youtube.downloadYoutube(item.url, videoPath);
-            break;
-          }
-          case "SOUNDCLOUD": {
-            await soundcloud.downloadSoundcloud(item.url, audioPath);
-            break;
-          }
-          case "SOUNDCLOUD_USER": {
-            await soundcloud.downloadSoundcloud(item.url, audioPath);
-            break;
-          }
+      switch (playlistType) {
+        case "YOUTUBE": {
+          await youtube.downloadYoutube(item.url, videoPath);
+          break;
         }
-        // task.output = `Downloaded "${filename}"`;
-
-        if (playlistType != "YOUTUBE") {
-          remaining--;
-          return;
+        case "SOUNDCLOUD": {
+          await soundcloud.downloadSoundcloud(item.url, audioPath);
+          break;
         }
+        case "SOUNDCLOUD_USER": {
+          await soundcloud.downloadSoundcloud(item.url, audioPath);
+          break;
+        }
+      }
+      if (playlistType == "YOUTUBE") {
         await mp3s.convertVideoToMp3(videoPath, audioPath);
-        // task.output = `Converted "${filename}"`;
-
         await fsPromises.unlink(videoPath);
-
-        // remaining--;
-        // task.title = `Downloading and converting ${remaining} songs.`;
-      } catch (err) {
-        // task.output = `Error when processing "${filename}"`;
-        errors.push(err);
-        // TODO process errors
       }
     }),
+    { title: `Downloading and converting "${playlist.name}"`, concurrency }
   );
 }
