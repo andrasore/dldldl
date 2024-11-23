@@ -19,7 +19,9 @@ export async function executeDldldl(workingDir: string) {
   const errors = [];
 
   for (const playlist of config.playlists) {
-    const targetDir = playlist.path ?? path.join(workingDir, util.convertToFilename(playlist.name));
+    const targetDir = playlist.path
+      ? path.join(workingDir, playlist.path)
+      : path.join(workingDir, util.convertToFilename(playlist.name));
     const newItems = await wrapTask(downloadPlaylistMetadata, { title: `Downloading metadata for "${playlist.name}"` })({ playlist, targetDir, mp3s });
     const dlErrors = await downloadAndConvert({
       targetDir,
