@@ -151,7 +151,7 @@ async function downloadAndConvert(
       try {
         switch (playlistType) {
           case "YOUTUBE": {
-            await youtube.downloadYoutube(item.url, videoPath);
+            await youtube.downloadYoutube(item.id, videoPath);
             break;
           }
           case "SOUNDCLOUD": {

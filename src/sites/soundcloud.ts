@@ -15,12 +15,12 @@ export async function downloadSoundcloud(url: string, targetFile: string) {
 
 export async function getPlaylistItems(url: URL): Promise<PlaylistItem[]> {
   const playlist = await soundcloud.playlists.get(url.toString());
-  return playlist.tracks.map((t) => ({ title: t.title, url: t.permalink_url }));
+  return playlist.tracks.map((t) => ({ title: t.title, url: t.permalink_url, id: String(t.id) }));
 }
 
 export async function getUserTracks(url: URL): Promise<PlaylistItem[]> {
   const userTracks = await soundcloud.users.tracks(
     url.pathname.slice(1) /* skip leading / */,
   );
-  return userTracks.map((t) => ({ title: t.title, url: t.permalink_url }));
+  return userTracks.map((t) => ({ title: t.title, url: t.permalink_url, id: String(t.id) }));
 }

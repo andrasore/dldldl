@@ -1,18 +1,17 @@
 import { createWriteStream } from "node:fs";
-import ytdl from "@distube/ytdl-core";
+import { pipeline } from 'node:stream/promises';
+import { Innertube } from 'youtubei.js';
 import ytpl from "ytpl";
 import { type PlaylistItem } from "../playlists.ts";
 
+const innertube = await Innertube.create();
+
 export async function downloadYoutube(
-  url: string,
+  id: string,
   targetFile: string,
 ): Promise<void> {
-  return await new Promise((resolve, reject) => {
-    ytdl(url, { quality: "highestaudio" })
-      .on("end", () => resolve())
-      .on("error", reject)
-      .pipe(createWriteStream(targetFile));
-  });
+  const readableStream = await innertube.download(id);
+  await pipeline(readableStream, createWriteStream(targetFile));
 }
 
 export async function getPlaylistItems(url: URL): Promise<PlaylistItem[]> {
