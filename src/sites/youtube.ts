@@ -26,7 +26,6 @@ export async function getPlaylistItems(url: URL): Promise<PlaylistItem[]> {
   // Continue fetching more videos if available
   let next = await playlist.getContinuation();
   do {
-    console.log(`fetched ${JSON.stringify(next.videos)}`)
     allVideos.push(...next.videos);
     next = await next.getContinuation();
   } while (next.has_continuation)
