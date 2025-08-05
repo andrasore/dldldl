@@ -16,7 +16,7 @@ export async function executeDldldl(workingDir: string) {
 
   const mp3s = await wrapTask(readLibrary, { title: 'Reading library' })({ workingDir });
 
-  const errors = [];
+  const errors: Error[] = [];
 
   for (const playlist of config.playlists) {
     const targetDir = playlist.path
@@ -26,7 +26,8 @@ export async function executeDldldl(workingDir: string) {
     const dlErrors = await downloadAndConvert({
       targetDir,
       playlist,
-      concurrency: config.concurrency ?? 3,
+      concurrency: config.concurrency ?? 1,
+      throttleMs: config.throttleMs ?? 5000,
       newItems
     });
     if (dlErrors instanceof Array) {
@@ -57,6 +58,7 @@ async function parseConfig(
       })
       .array(),
     concurrency: zod.number().min(1).optional(),
+    throttleMs: zod.number().min(0).optional(),
   }).strict();
 
   const workingDirContent = await fsPromises.readdir(workingDir);
@@ -136,14 +138,22 @@ async function downloadPlaylistMetadata(
   return newItems;
 }
 
+const shuffle= <T>(array: T[]) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
+
 async function downloadAndConvert(
-  { targetDir, playlist, concurrency, newItems }: { targetDir: string, playlist: Playlist, concurrency: number, newItems: PlaylistItem[] }
+  { targetDir, playlist, concurrency, throttleMs, newItems }: { targetDir: string, playlist: Playlist, concurrency: number, throttleMs: number, newItems: PlaylistItem[] }
 ): Promise<void | Error[]> {
   const playlistUrl = new URL(playlist.url);
   const playlistType = util.getPlaylistType(playlistUrl);
 
   return wrapParallelTasks(
-    newItems.map((item) => async () => {
+    shuffle(newItems).map((item) => async () => {
       const filename = util.convertToFilename(item.title);
       const videoPath = path.join(targetDir, filename + ".mp4");
       const audioPath = path.join(targetDir, filename + ".mp3");
@@ -179,6 +189,6 @@ async function downloadAndConvert(
       }
       return;
     }),
-    { title: `Downloading and converting "${playlist.name}"`, concurrency }
+    { title: `Downloading and converting "${playlist.name}"`, concurrency, throttleMs }
   );
 }

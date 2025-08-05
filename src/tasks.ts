@@ -1,4 +1,5 @@
 import { createSpinner } from 'nanospinner';
+import {setTimeout} from "timers/promises";
 import PQueue from "p-queue";
 
 type TaskOptions = {
@@ -27,11 +28,12 @@ export function wrapTask<Params, ReturnType> (
 type ParallelTaskOptions = {
    title: string;
    concurrency: number;
+   throttleMs: number;
 }
 
 export async function wrapParallelTasks(
     taskFns: (() => Promise<void | Error>)[],
-    { title, concurrency }: ParallelTaskOptions): Promise<void | Error[]> {
+    { title, concurrency, throttleMs }: ParallelTaskOptions): Promise<void | Error[]> {
 
     let done = 0;
     const workQueue = new PQueue({ concurrency });
@@ -43,6 +45,7 @@ export async function wrapParallelTasks(
         if (result instanceof Error) {
             errors.push(result);
         }
+        await setTimeout(throttleMs);
         done++;
         spinner.update({ text: `${title} (${done}/${taskFns.length})`});
     }))
