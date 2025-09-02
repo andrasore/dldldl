@@ -10,7 +10,7 @@ export async function downloadYoutube(
   id: string,
   targetFile: string,
 ): Promise<void> {
-  const readableStream = await innertube.download(id, { client: 'MWEB'});
+  const readableStream = await innertube.download(id, { client: 'WEB_EMBEDDED'});
   await pipeline(readableStream, createWriteStream(targetFile));
 }
 
