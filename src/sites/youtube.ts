@@ -25,10 +25,11 @@ export async function getPlaylistItems(url: URL): Promise<PlaylistItem[]> {
   // Continue fetching more videos if available
   if (playlist.has_continuation) {
     let next = await playlist.getContinuation();
-    do {
-      allVideos.push(...next.videos);
+	allVideos.push(...next.videos);
+    while (next.has_continuation) {     
       next = await next.getContinuation();
-    } while (next.has_continuation)
+	  allVideos.push(...next.videos);
+    } 
   }
   
   return allVideos.map(v => {
