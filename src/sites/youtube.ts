@@ -1,10 +1,26 @@
 import assert from "node:assert";
 import { createWriteStream } from "node:fs";
 import { pipeline } from 'node:stream/promises';
-import { Innertube } from 'youtubei.js';
+import { Innertube, Platform } from 'youtubei.js';
 import { type PlaylistItem } from "../playlists.ts";
 
 const innertube = await Innertube.create();
+
+Platform.shim.eval = async (data, env) => {
+  const properties = [];
+
+  if(env.n) {
+    properties.push(`n: exportedVars.nFunction("${env.n}")`)
+  }
+
+  if (env.sig) {
+    properties.push(`sig: exportedVars.sigFunction("${env.sig}")`)
+  }
+
+  const code = `${data.output}\nreturn { ${properties.join(', ')} }`;
+
+  return new Function(code)();
+}
 
 export async function downloadYoutube(
   id: string,
